@@ -3,7 +3,6 @@
 // https://thecodingtrain.com/Courses/ml5-beginners-guide/7.1-posenet.html
 // https://youtu.be/OIo-DIOkNVg
 // https://editor.p5js.org/codingtrain/sketches/ULA97pJXR
-
 let video;
 let poseNet;
 let pose;
@@ -22,15 +21,9 @@ function gotPoses(poses) {
   try {     
     const response = fetch('http://localhost:3000/api/pose', {
       method: 'post',
-      body: {
-        "pose": [{
-          "title": "Shahab",
-          "description": "All of the info about my first thing",
-          "imageUrl": "",
-          "price": "4900",
-          "userId": "qsomihvqios"
-      }]
-      }
+      body: JSON.stringify({
+        "pose": poses
+      })
     });
     console.log('Completed!', response);
   } catch(err) {
