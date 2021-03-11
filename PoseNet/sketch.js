@@ -34,17 +34,7 @@ function gotPoses(poses) {
     .then(response => response.text())
     .then(result => console.log(result))
     .catch(error => console.log('error', error));
-  // try {
-  //   const response = fetch('http://localhost:3000/api/pose', {
-  //     method: 'post',
-  //     body: JSON.stringify({
-  //       "pose": poses
-  //     })
-  //   });
-  //   console.log('Completed!', response);
-  // } catch (err) {
-  //   console.error(`Error: ${err}`);
-  // }
+
   if (poses.length > 0) {
     pose = poses[0].pose;
     skeleton = poses[0].skeleton;
