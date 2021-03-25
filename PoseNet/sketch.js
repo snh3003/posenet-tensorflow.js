@@ -7,7 +7,47 @@ let video;
 let poseNet;
 let pose;
 let skeleton;
+let poses_list = [];
+let temp_list = [];
+const mode = a => 
+          Object.values(
+            a.reduce((count, e) => {
+              if (!(e in count)) {
+                count[e] = [0,e];
+              }
+              count[e][0]++;
+              return count;
+            }, {})
+          ).reduce((a,v) => v[0]<a[0]? a:v, [0, null])[1];
+;
 
+function avgposes(poses){
+  poses_list.push(poses[0].pose)
+  console.log(poses_list)
+  if (poses_list.length > 20) {
+    
+    poses_list = []
+    var raw = JSON.stringify(poses);
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+
+    fetch("http://localhost:3000/api/pose", requestOptions)
+      .then(response => response.text())
+      .then(result => console.log(result))
+      .catch(error => console.log('error', error));
+
+    if (poses.length > 0) {
+      pose = poses[0].pose;
+      skeleton = poses[0].skeleton;
+    }
+  }
+
+}
 function setup() {
   createCanvas(640, 480);
   video = createCapture(VIDEO);
@@ -17,28 +57,11 @@ function setup() {
 }
 
 function gotPoses(poses) {
-  console.log(poses);
+  // console.log(poses);
+  // poses_list.push(poses[0].pose)
+  setTimeout(avgposes, 2000 ,poses)
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
-
-  var raw = JSON.stringify(poses);
-
-  var requestOptions = {
-    method: 'POST',
-    headers: myHeaders,
-    body: raw,
-    redirect: 'follow'
-  };
-
-  fetch("http://localhost:3000/api/pose", requestOptions)
-    .then(response => response.text())
-    .then(result => console.log(result))
-    .catch(error => console.log('error', error));
-
-  if (poses.length > 0) {
-    pose = poses[0].pose;
-    skeleton = poses[0].skeleton;
-  }
 }
 
 
