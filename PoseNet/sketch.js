@@ -7,8 +7,24 @@ let video;
 let poseNet;
 let pose;
 let skeleton;
-let poses_list = [];
+//let poseList = {};
 let temp_list = [];
+let numPoses = 0
+let numKeyPoints = 0
+let keyPoint;
+let endPose;
+let partsList = ["nose", "leftEye", "rightEye", "leftEar", "rightEar", "leftShoulder", "rightShoulder", "leftElbow", "rightElbow", "leftWrist", "rightWrist", "leftHip", "rightHip", "leftKnee", "rightKnee", "leftAnkle", "rightAnkle"]
+var poseList = {"nose":{"x":[], "y":[]}, "leftEye":{"x":[], "y":[]}, "rightEye":{"x":[], "y":[]}, "leftEar":{"x":[], "y":[]}, "rightEar":{"x":[], "y":[]}, "leftShoulder":{"x":[], "y":[]}, "rightShoulder":{"x":[], "y":[]}, "leftElbow":{"x":[], "y":[]}, "rightElbow":{"x":[], "y":[]}, "leftWrist":{"x":[], "y":[]}, "rightWrist":{"x":[], "y":[]}, "leftHip":{"x":[], "y":[]}, "rightHip":{"x":[], "y":[]}, "leftKnee":{"x":[], "y":[]}, "rightKnee":{"x":[], "y":[]}, "leftAnkle":{"x":[], "y":[]}, "rightAnkle":{"x":[], "y":[]}}
+numKeyPoints = partsList.length
+
+//for(var i = 0; i< numKeyPoints; i++) {
+//	poseList[partsList[i]] = {"x":[], "y":[]}
+//}
+//var poseList = partsList.reduce(function(obj, x) {
+//    obj[key_maker(x)] = {"x":[], "y":[]};
+//    return obj;
+//}, {});
+
 const mode = a => 
           Object.values(
             a.reduce((count, e) => {
@@ -22,12 +38,32 @@ const mode = a =>
 ;
 
 function avgposes(poses){
-  poses_list.push(poses[0].pose)
-  console.log(poses_list)
-  if (poses_list.length > 20) {
-    
-    poses_list = []
-    var raw = JSON.stringify(poses);
+  numPoses = numPoses + 1
+  // keyPoints = poses.keypoints
+  console.log("The received response is: ")
+  console.log(poses)
+  console.log(poseList)
+  numResponse = poses.length
+  for(var i=0;i<numResponse;i++){
+  	keyPoints = poses[i]['pose']['keypoints']
+  	receivedKeyPoints = keyPoints.length
+	  for(var i = 0; i< receivedKeyPoints; i++) {
+	  	record = keyPoints[i]
+	  	poseList[record['part']]['x'].push(record['position']['x'])
+	  	poseList[record['part']]['y'].push(record['position']['y'])
+	  }	
+  }
+  
+  // console.log(poses_list)
+  if (numPoses > 20) {
+    for(var i=0;i<numKeyPoints;i++){
+    	poseList[partsList[i]]['x'] = mode(poseList[partsList[i]]['x'])
+    	poseList[partsList[i]]['y'] = mode(poseList[partsList[i]]['y'])
+    }
+    endPose = poseList
+    numPoses = 0
+	var poseList = {"nose":{"x":[], "y":[]}, "leftEye":{"x":[], "y":[]}, "rightEye":{"x":[], "y":[]}, "leftEar":{"x":[], "y":[]}, "rightEar":{"x":[], "y":[]}, "leftShoulder":{"x":[], "y":[]}, "rightShoulder":{"x":[], "y":[]}, "leftElbow":{"x":[], "y":[]}, "rightElbow":{"x":[], "y":[]}, "leftWrist":{"x":[], "y":[]}, "rightWrist":{"x":[], "y":[]}, "leftHip":{"x":[], "y":[]}, "rightHip":{"x":[], "y":[]}, "leftKnee":{"x":[], "y":[]}, "rightKnee":{"x":[], "y":[]}, "leftAnkle":{"x":[], "y":[]}, "rightAnkle":{"x":[], "y":[]}}
+    var raw = JSON.stringify(endPose);
 
     var requestOptions = {
       method: 'POST',
@@ -42,8 +78,8 @@ function avgposes(poses){
       .catch(error => console.log('error', error));
 
     if (poses.length > 0) {
-      pose = poses[0].pose;
-      skeleton = poses[0].skeleton;
+      pose = endPose[0].pose;
+      skeleton = endPose[0].skeleton;
     }
   }
 
