@@ -25,44 +25,73 @@ numKeyPoints = partsList.length
 //    return obj;
 //}, {});
 
-const mode = a => 
-          Object.values(
-            a.reduce((count, e) => {
-              if (!(e in count)) {
-                count[e] = [0,e];
-              }
-              count[e][0]++;
-              return count;
-            }, {})
-          ).reduce((a,v) => v[0]<a[0]? a:v, [0, null])[1];
-;
+// const mode = a => 
+//           Object.values(
+//             a.reduce((count, e) => {
+//               if (!(e in count)) {
+//                 count[e] = [0,e];
+//               }
+//               count[e][0]++;
+//               return count;
+//             }, {})
+//           ).reduce((a,v) => v[0]<a[0]? a:v, [0, null])[1];
+// ;
 
-function avgposes(poses){
+function mode (a){
+  result = {}
+  a.forEach(value=>{
+    if (value in result){
+      result.value += 1
+    }
+    else{
+      result[value] = 1
+    }
+  })
+  var maxFreq = 0;
+  var ans = 0;
+  for(val in result){
+    if (result[val] > maxFreq){
+      ans = val;
+      maxFreq = result[val];
+    }
+  }
+  return ans;
+}
+
+function avgposes(poses, poseList){
   numPoses = numPoses + 1
   // keyPoints = poses.keypoints
-  console.log("The received response is: ")
-  console.log(poses)
-  console.log(poseList)
+  // console.log("The received response is: ")
+  //console.log("Poses", poses)
+  //console.log(poseList, "PoseList")
   numResponse = poses.length
   for(var i=0;i<numResponse;i++){
   	keyPoints = poses[i]['pose']['keypoints']
   	receivedKeyPoints = keyPoints.length
 	  for(var i = 0; i< receivedKeyPoints; i++) {
-	  	record = keyPoints[i]
+	    record = keyPoints[i]
 	  	poseList[record['part']]['x'].push(record['position']['x'])
 	  	poseList[record['part']]['y'].push(record['position']['y'])
+	  	//console.log(poseList[record['part']]['x'])
+	  	//console.log(poseList[record['part']]['y'])
+	  	// console.log(poseList)
 	  }	
   }
-  
-  // console.log(poses_list)
+  // if (numPoses > 20){
+  //   console.log(1/0)
+  // }
+  // console.log("Poses: ", numPoses)
+  console.log(poseList)
   if (numPoses > 20) {
+  	console.log("Entered")
     for(var i=0;i<numKeyPoints;i++){
     	poseList[partsList[i]]['x'] = mode(poseList[partsList[i]]['x'])
     	poseList[partsList[i]]['y'] = mode(poseList[partsList[i]]['y'])
     }
+    console.log(poseList)
     endPose = poseList
     numPoses = 0
-	var poseList = {"nose":{"x":[], "y":[]}, "leftEye":{"x":[], "y":[]}, "rightEye":{"x":[], "y":[]}, "leftEar":{"x":[], "y":[]}, "rightEar":{"x":[], "y":[]}, "leftShoulder":{"x":[], "y":[]}, "rightShoulder":{"x":[], "y":[]}, "leftElbow":{"x":[], "y":[]}, "rightElbow":{"x":[], "y":[]}, "leftWrist":{"x":[], "y":[]}, "rightWrist":{"x":[], "y":[]}, "leftHip":{"x":[], "y":[]}, "rightHip":{"x":[], "y":[]}, "leftKnee":{"x":[], "y":[]}, "rightKnee":{"x":[], "y":[]}, "leftAnkle":{"x":[], "y":[]}, "rightAnkle":{"x":[], "y":[]}}
+	  var poseList = {"nose":{"x":[], "y":[]}, "leftEye":{"x":[], "y":[]}, "rightEye":{"x":[], "y":[]}, "leftEar":{"x":[], "y":[]}, "rightEar":{"x":[], "y":[]}, "leftShoulder":{"x":[], "y":[]}, "rightShoulder":{"x":[], "y":[]}, "leftElbow":{"x":[], "y":[]}, "rightElbow":{"x":[], "y":[]}, "leftWrist":{"x":[], "y":[]}, "rightWrist":{"x":[], "y":[]}, "leftHip":{"x":[], "y":[]}, "rightHip":{"x":[], "y":[]}, "leftKnee":{"x":[], "y":[]}, "rightKnee":{"x":[], "y":[]}, "leftAnkle":{"x":[], "y":[]}, "rightAnkle":{"x":[], "y":[]}}
     var raw = JSON.stringify(endPose);
 
     var requestOptions = {
@@ -95,7 +124,8 @@ function setup() {
 function gotPoses(poses) {
   // console.log(poses);
   // poses_list.push(poses[0].pose)
-  setTimeout(avgposes, 2000 ,poses)
+  // setTimeout(avgposes, 2000 ,poses)
+  avgposes(poses, poseList)
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 }
@@ -103,6 +133,7 @@ function gotPoses(poses) {
 
 function modelLoaded() {
   console.log('poseNet ready');
+  console.log(poseList);
 }
 
 function draw() {
