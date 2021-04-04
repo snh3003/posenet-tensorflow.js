@@ -81,7 +81,7 @@ function avgposes(poses, poseList){
   //   console.log(1/0)
   // }
   // console.log("Poses: ", numPoses)
-  console.log(poseList)
+  //console.log(poseList)
   if (numPoses > 20) {
   	console.log("Entered")
     endPose = JSON.parse(JSON.stringify(poseList));
@@ -89,14 +89,13 @@ function avgposes(poses, poseList){
     	endPose[partsList[i]]['x'] = mode(endPose[partsList[i]]['x'])
     	endPose[partsList[i]]['y'] = mode(endPose[partsList[i]]['y'])
     }
-    console.log(poseList)
+    //console.log(poseList)
     numPoses = 0
 	  poseList = {"nose":{"x":[], "y":[]}, "leftEye":{"x":[], "y":[]}, "rightEye":{"x":[], "y":[]}, "leftEar":{"x":[], "y":[]}, "rightEar":{"x":[], "y":[]}, "leftShoulder":{"x":[], "y":[]}, "rightShoulder":{"x":[], "y":[]}, "leftElbow":{"x":[], "y":[]}, "rightElbow":{"x":[], "y":[]}, "leftWrist":{"x":[], "y":[]}, "rightWrist":{"x":[], "y":[]}, "leftHip":{"x":[], "y":[]}, "rightHip":{"x":[], "y":[]}, "leftKnee":{"x":[], "y":[]}, "rightKnee":{"x":[], "y":[]}, "leftAnkle":{"x":[], "y":[]}, "rightAnkle":{"x":[], "y":[]}}
     var raw = JSON.stringify(endPose);
-
+    console.log(raw);
     var requestOptions = {
       method: 'POST',
-      
       body: raw,
       redirect: 'follow'
     };
@@ -133,7 +132,7 @@ function gotPoses(poses) {
 
 function modelLoaded() {
   console.log('poseNet ready');
-  console.log(poseList);
+  //console.log(poseList);
 }
 
 function draw() {
