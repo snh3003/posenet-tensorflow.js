@@ -93,10 +93,13 @@ function avgposes(poses, poseList){
     numPoses = 0
 	  poseList = {"nose":{"x":[], "y":[]}, "leftEye":{"x":[], "y":[]}, "rightEye":{"x":[], "y":[]}, "leftEar":{"x":[], "y":[]}, "rightEar":{"x":[], "y":[]}, "leftShoulder":{"x":[], "y":[]}, "rightShoulder":{"x":[], "y":[]}, "leftElbow":{"x":[], "y":[]}, "rightElbow":{"x":[], "y":[]}, "leftWrist":{"x":[], "y":[]}, "rightWrist":{"x":[], "y":[]}, "leftHip":{"x":[], "y":[]}, "rightHip":{"x":[], "y":[]}, "leftKnee":{"x":[], "y":[]}, "rightKnee":{"x":[], "y":[]}, "leftAnkle":{"x":[], "y":[]}, "rightAnkle":{"x":[], "y":[]}}
     var raw = JSON.stringify(endPose);
+    var myHeaders = new Headers();
+myHeaders.append("Content-Type", "application/json");
     console.log(raw);
     var requestOptions = {
       method: 'POST',
       body: raw,
+      headers: myHeaders,
       redirect: 'follow'
     };
 
